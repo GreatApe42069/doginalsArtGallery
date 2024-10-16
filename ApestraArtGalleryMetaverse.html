@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Spooky Society</title>
+    <style>
+                @font-face {
+            font-family: 'CustomFont';
+            src: url('/content/b4e86ccacade8a0abf29debd0a08f6547b1a88683fa51a3409712b8efef44be9i0') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            color: white;
+            font-family: CustomFont, sans-serif;
+        }
+        #modalContent {
+            text-align: center;
+            background-color: #a39c84;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #okButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #000000;
+            color: rgb(255, 255, 255);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: CustomFont, sans-serif;
+        }
+        #topButtons {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 150;
+            display: flex;
+            gap: 10px;
+            font-family: CustomFont, sans-serif;
+        }
+        .topButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #a39c84;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: CustomFont, sans-serif;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button {
+            width: 60px;
+            height: 60px;
+            margin: 10px;
+            border-radius: 50%;
+            background-color: 	#a39c84;
+            color: rgb(0, 0, 0);
+            font-size: 24px;
+            text-align: center;
+            line-height: 60px;
+            user-select: none;
+            cursor: pointer;
+        }
+        #joystick {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #a39c84;
+            touch-action: none;
+            z-index: 100;
+        }
+        #joystickInner {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: 	#ccc;
+            position: relative;
+            top: 25%;
+            left: 25%;
+        }
+        #horizontalControls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="modal">
+    <div id="modalContent">
+        <p>Ape-stract Art Gallery</p>
+        <p>Click and drag to look around, Use ASWD or arrow keys</p>
+        <p>Mobile - Follow on screen instructions</p>
+        <p>Press refresh to see new images</p>
+        <p>Back to go back</p>
+        <p>Click on images to view in marketplace
+        </p>
+        <button id="okButton">OK</button>
+    </div>
+</div>
+
+<div id="topButtons">
+    <button id="backButton" class="topButton">Back</button>
+    <button id="refreshButton" class="topButton">Refresh</button>
+</div>
+
+<div id="controls">
+    <div class="button" id="up">↑</div>
+    <div id="horizontalControls">
+        <div class="button" id="left">←</div>
+        <div class="button" id="down">↓</div>
+        <div class="button" id="right">→</div>
+    </div>
+</div>
+
+<div id="joystick">
+    <div id="joystickInner"></div>
+</div>
+
+<script src="/content/f8d6d9594ff93cb4190cfa81d877b81b59b0d2acd975685fdd12efd0452bd190i0"></script>
+
+
+<script>
+    const inscriptionIds = [
+ "9ee391a157bb8883f4f085cb1edf807d5e6f9958b481d3286f0127fa2df96838i0THESE-NEED-REPLACED",
+"5660557e52431d4f3b32e3a1ec0a119b3db5420e493e58ea660479b42028e24ei0THESE-NEED-REPLACED",
+"43f6e35082356cbd970fb8ad77a76e2c9a63dc6d023036ba7661dac8cd472d5ei0THESE-NEED-REPLACED",
+"d3eafee96ecc0c3fd64ce8e367ac59a8e026e3f68aa257716ee2cbd2d7ead0d7i0THESE-NEED-REPLACED-WITH-APESTRACTS-IDS"
+
+    ];  
+
+    let camera, scene, renderer;
+    let raycaster, mouse, isDragging = false;
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+    const velocity = new THREE.Vector3();
+    const speed = 0.09;  
+    let currentImageIndex = 0;
+    let imageMeshes = [];
+
+    init();
+    animate();
+
+    function init() {
+    
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 0); 
+
+    scene = new THREE.Scene();
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    
+    const floorGeometry = new THREE.PlaneGeometry(100, 100);
+    const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });  
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = 0;
+    scene.add(floor);
+    
+    const ceiling = new THREE.Mesh(floorGeometry, floorMaterial); 
+    const ceilingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });  
+    ceiling.material = ceilingMaterial;
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.y = 15;
+    scene.add(ceiling);
+
+    const wallMaterial = new THREE.MeshBasicMaterial({ color:  0x000000 });  
+    const wallHeight = 15;
+    const wallWidth = 100;
+    const wallDepth = 1;
+
+    createWall(0, wallHeight / 2, -50, wallWidth, wallHeight, wallDepth, wallMaterial);  
+    createWall(-50, wallHeight / 2, 0, wallDepth, wallHeight, wallWidth, wallMaterial);  
+    createWall(50, wallHeight / 2, 0, wallDepth, wallHeight, wallWidth, wallMaterial);   
+    createWall(0, wallHeight / 2, 50, wallWidth, wallHeight, wallDepth, wallMaterial);   
+
+    refreshImages();
+
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+
+        document.addEventListener('mousedown', () => { isDragging = true; });
+        document.addEventListener('mouseup', () => { isDragging = false; });
+        document.addEventListener('mousemove', onMouseMove, false);
+        document.addEventListener('keydown', onKeyDown, false);
+        document.addEventListener('keyup', onKeyUp, false);
+        document.addEventListener('click', onDocumentMouseDown, false);
+
+        // On-screen controls
+        document.getElementById('up').addEventListener('touchstart', () => moveForward = true);
+        document.getElementById('up').addEventListener('touchend', () => moveForward = false);
+
+        document.getElementById('down').addEventListener('touchstart', () => moveBackward = true);
+        document.getElementById('down').addEventListener('touchend', () => moveBackward = false);
+
+        document.getElementById('left').addEventListener('touchstart', () => moveRight = true); 
+        document.getElementById('left').addEventListener('touchend', () => moveRight = false);
+
+        document.getElementById('right').addEventListener('touchstart', () => moveLeft = true); 
+        document.getElementById('right').addEventListener('touchend', () => moveLeft = false);
+
+        
+        const joystick = document.getElementById('joystick');
+        const joystickInner = document.getElementById('joystickInner');
+        let startX, deltaX;
+
+        joystick.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            startX = touch.clientX;
+        });
+
+        joystick.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            deltaX = touch.clientX - startX;
+
+            const rotationSpeed = 0.0005; 
+            camera.rotation.y -= deltaX * rotationSpeed;
+
+            joystickInner.style.transform = `translateX(${deltaX}px)`;
+        });
+
+        joystick.addEventListener('touchend', () => {
+            joystickInner.style.transform = `translateX(0px)`;
+        });
+        
+        document.getElementById('okButton').addEventListener('click', () => {
+            document.getElementById('modal').style.display = 'none';
+        });
+
+        document.getElementById('backButton').addEventListener('click', () => {
+            window.history.back();
+        });
+        
+        document.getElementById('refreshButton').addEventListener('click', (event) => {
+        event.stopPropagation();  // Prevent event from propagating and triggering other handlers
+        refreshImages();
+        });
+    }
+
+    function createWall(x, y, z, width, height, depth, material) {
+    const wallGeometry = new THREE.BoxGeometry(width, height, depth);
+    const wall = new THREE.Mesh(wallGeometry, material);
+    wall.position.set(x, y, z);
+    scene.add(wall);
+    return wall;
+}
+
+    function createImageOnWall(x, y, z, rotY, index) {
+        if (index >= inscriptionIds.length) return;
+
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load(`/content/${inscriptionIds[index]}`);
+        const imageMaterial = new THREE.MeshBasicMaterial({ map: texture });
+        const imageGeometry = new THREE.PlaneGeometry(6, 6);
+        const imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
+
+        imageMesh.position.set(x, y, z);
+        imageMesh.rotation.y = rotY;
+        imageMesh.userData = { url: `https://doggy.market/inscription/${inscriptionIds[index]}` };
+        scene.add(imageMesh);
+        imageMeshes.push(imageMesh);
+    }
+
+    function refreshImages() {
+        // Remove existing image meshes
+        for (let mesh of imageMeshes) {
+            scene.remove(mesh);
+        }
+        imageMeshes = [];
+
+        const imageSize = 6;  
+        const imageDistance = 10;  
+        let index = currentImageIndex;
+
+        const firstRowHeight = 4; 
+        const secondRowHeight = 11
+;  
+        
+        for (let i = -40; i <= 40; i += imageDistance) {
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, firstRowHeight, -48, 0, index++); 
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(-48, firstRowHeight, i, Math.PI / 2, index++); 
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, firstRowHeight, 48, Math.PI, index++); 
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(48, firstRowHeight, i, -Math.PI / 2, index++); 
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, secondRowHeight, -48, 0, index++); 
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(-48, secondRowHeight, i, Math.PI / 2, index++); 
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, secondRowHeight, 48, Math.PI, index++); 
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(48, secondRowHeight, i, -Math.PI / 2, index++); 
+        }
+
+        currentImageIndex = index % inscriptionIds.length;
+    }
+
+    function onMouseMove(event) {
+        if (!isDragging) return;
+
+        const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+
+        camera.rotation.y -= movementX * 0.002;
+    }
+
+    function onKeyDown(event) {
+        switch (event.code) {
+            case 'ArrowDown':
+            case 'KeyS':
+                moveBackward = true;  
+                break;
+            case 'ArrowLeft':
+            case 'KeyA':
+                moveRight = true;  
+                break;
+            case 'ArrowUp':
+            case 'KeyW':
+                moveForward = true;  
+                break;
+            case 'ArrowRight':
+            case 'KeyD':
+                moveLeft = true;  
+                break;
+        }
+    }
+
+    function onKeyUp(event) {
+        switch (event.code) {
+            case 'ArrowDown':
+            case 'KeyS':
+                moveBackward = false;  
+                break;
+            case 'ArrowLeft':
+            case 'KeyA':
+                moveRight = false;  
+                break;
+            case 'ArrowUp':
+            case 'KeyW':
+                moveForward = false;  
+                break;
+            case 'ArrowRight':
+            case 'KeyD':
+                moveLeft = false;  
+                break;
+        }
+    }
+
+    function onDocumentMouseDown(event) {
+        event.preventDefault();
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(scene.children, true);
+
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            if (object.userData.url) {
+                window.open(object.userData.url, '_blank');
+            }
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        let moveDirection = new THREE.Vector3();
+
+        if (moveForward) {
+            moveDirection.add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(speed));
+        }
+
+        if (moveBackward) {
+            moveDirection.sub(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(speed));
+        }
+
+        if (moveLeft) {
+            moveDirection.x -= camera.getWorldDirection(new THREE.Vector3()).z * speed;
+            moveDirection.z += camera.getWorldDirection(new THREE.Vector3()).x * speed;
+        }
+
+        if (moveRight) {
+            moveDirection.x += camera.getWorldDirection(new THREE.Vector3()).z * speed;
+            moveDirection.z -= camera.getWorldDirection(new THREE.Vector3()).x * speed;
+        }
+
+        camera.position.add(moveDirection);
+
+        const floorLevel = 0;
+        const ceilingHeight = 15;
+
+        camera.position.y = Math.max(floorLevel + 1.7, Math.min(ceilingHeight - 0.5, camera.position.y));
+
+        camera.position.x = Math.max(-49, Math.min(49, camera.position.x));
+        camera.position.z = Math.max(-49, Math.min(49, camera.position.z));
+
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', function () {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+</script>
+
+</body>
+</html>
