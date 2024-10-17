@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=dsevice-width, initial-scale=1.0">
     <title>Ape-stract Art Gallery</title>
     <style>
                 @font-face {
             font-family: 'CustomFont';
-            src: url('/content/b4e86ccacade8a0abf29debd0a08f6547b1a88683fa51a3409712b8efef44be9i0') format('truetype');
+            src: url('https://cdn.doggy.market/content/b4e86ccacade8a0abf29debd0a08f6547b1a88683fa51a3409712b8efef44be9i0') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -23,22 +23,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
+	    color: #e61cf4;
             z-index: 200;
-            color: white;
             font-family: CustomFont, sans-serif;
         }
         #modalContent {
             text-align: center;
-            background-color: #a39c84;
+            background-image: url('https://cdn.doggy.market/content/ba71544f3a6431f4a83375bdcecf4f714a25dafb82920ba79bab638f84968230i0');
+    	    background-size: cover; /* Ensures the image covers the entire box */
             padding: 20px;
             border-radius: 10px;
         }
+
         #okButton {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #000000;
-            color: rgb(255, 255, 255);
+            background-color: #2700ff;
+            color: rgb(255, 255, 0);
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -56,8 +58,8 @@
         .topButton {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #a39c84;
-            color: white;
+            background-color: #00ff3dad;
+            color: #2700ff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -77,7 +79,7 @@
             height: 60px;
             margin: 10px;
             border-radius: 50%;
-            background-color: 	#a39c84;
+            background-color: 	#43415d;
             color: rgb(0, 0, 0);
             font-size: 24px;
             text-align: center;
@@ -92,7 +94,7 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            background-color: #a39c84;
+            background-color: #43415d;
             touch-action: none;
             z-index: 100;
         }
@@ -117,11 +119,12 @@
 <div id="modal">
     <div id="modalContent">
         <p>Ape-stract Art Gallery</p>
-        <p>Click and drag to look around, Use ASWD or arrow keys</p>
+        <p>Click and drag to Monkey around 
+Using ASWD or arrow keys</p>
         <p>Mobile - Follow on screen instructions</p>
         <p>Press refresh to see new images</p>
         <p>Back to go back</p>
-        <p>Click on images to view in marketplace
+        <p>Click on images to view in Marketplace
         </p>
         <button id="okButton">OK</button>
     </div>
