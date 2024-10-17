@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ape-stract Art Gallery</title>
     <style>
-                @font-face {
+        @font-face {
             font-family: 'CustomFont';
             src: url('https://wonky-ord.dogeord.io/content/b3af17d23c17f604ec00251e4333cd40fa6230ed7386d685d63d3acce9516f33i0') format('truetype');
             font-weight: normal;
@@ -29,18 +29,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-	    color: #e61cf4;
+            color: #e61cf4;
             z-index: 200;
             font-family: CustomFont, sans-serif;
         }
         #modalContent {
             text-align: center;
             background-image: url('https://wonky-ord.dogeord.io/content/ba71544f3a6431f4a83375bdcecf4f714a25dafb82920ba79bab638f84968230i0');
-    	    background-size: cover; /* Ensures the image covers the entire box */
-            padding: 20px;
-            border-radius: 10px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: 69px;
+            border-radius: 30px;
         }
-
         #okButton {
             margin-top: 20px;
             padding: 10px 20px;
@@ -49,7 +50,7 @@
             color: rgb(255, 255, 0);
             border: none;
             border-radius: 5px;
-            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto; /* Custom cursor */
+            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
             font-family: CustomFont, sans-serif;
         }
         #topButtons {
@@ -68,7 +69,7 @@
             color: #2700ff;
             border: none;
             border-radius: 5px;
-            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto; /* Custom cursor */
+            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
             font-family: CustomFont, sans-serif;
         }
         #controls {
@@ -85,13 +86,13 @@
             height: 60px;
             margin: 10px;
             border-radius: 50%;
-            background-color: 	#43415d;
+            background-color: #43415d;
             color: rgb(0, 0, 0);
             font-size: 24px;
             text-align: center;
             line-height: 60px;
             user-select: none;
-            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto; /* Custom cursor */
+            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
         }
         #joystick {
             position: absolute;
@@ -108,7 +109,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: 	#ccc;
+            background-color: #ccc;
             position: relative;
             top: 25%;
             left: 25%;
@@ -125,13 +126,12 @@
 <div id="modal">
     <div id="modalContent">
         <p>Ape-stract Art Gallery</p>
-        <p>Click and drag to Monkey around 
-Using ASWD or arrow keys</p>
+        <p>Click and drag to Monkey Around 
+        Using ASWD or arrow keys</p>
         <p>Mobile - Follow on screen instructions</p>
         <p>Press refresh to see new images</p>
         <p>Back to go back</p>
-        <p>Click on images to view in Marketplace
-        </p>
+        <p>Click on images to view in Marketplace</p>
         <button id="okButton">OK</button>
     </div>
 </div>
@@ -156,16 +156,11 @@ Using ASWD or arrow keys</p>
 
 <script src="/content/f8d6d9594ff93cb4190cfa81d877b81b59b0d2acd975685fdd12efd0452bd190i0"></script>
 
-
 <script>
     const inscriptionIds = [
-
-"5c4e39b917b700ce2c9e4840130c825a8365e8b6ff516e82f7680f194f39ba78i0",
-"6b1ad2788d6933118dce167f5b59eaefea0b96cf26a893ee647c26849523e7d3i0",
-"c724722bdfbc159c9162dae0acc1e8eabb26cc08ea7b831d2fb9be02094a80a7i0",
-"2f007b97ae7b2d0543c28a421ec5f1072fba80eb7d38857eb39ea70c6998497bi0"
-
-    ];  
+        "5c4e39b917b700ce2c9e4840130c825a8365e8b6ff516e82f7680f194f39ba78i0",   
+        "c0a060de67dce99fe1fada13cdb69d132b51bd1df83706df0891a902c8c50347i0"
+    ];
 
     let camera, scene, renderer;
     let raycaster, mouse, isDragging = false;
@@ -179,44 +174,52 @@ Using ASWD or arrow keys</p>
     animate();
 
     function init() {
-    
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 2, 0); 
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2, 0); 
 
-    scene = new THREE.Scene();
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-    
-    const floorGeometry = new THREE.PlaneGeometry(100, 100);
-    const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });  
-    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = 0;
-    scene.add(floor);
-    
-    const ceiling = new THREE.Mesh(floorGeometry, floorMaterial); 
-    const ceilingMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });  
-    ceiling.material = ceilingMaterial;
-    ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.y = 15;
-    scene.add(ceiling);
+        scene = new THREE.Scene();
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-    const wallMaterial = new THREE.MeshBasicMaterial({ color:  0x000000 });  
-    const wallHeight = 15;
-    const wallWidth = 100;
-    const wallDepth = 1;
+        const textureLoader = new THREE.TextureLoader();
 
-    createWall(0, wallHeight / 2, -50, wallWidth, wallHeight, wallDepth, wallMaterial);  
-    createWall(-50, wallHeight / 2, 0, wallDepth, wallHeight, wallWidth, wallMaterial);  
-    createWall(50, wallHeight / 2, 0, wallDepth, wallHeight, wallWidth, wallMaterial);   
-    createWall(0, wallHeight / 2, 50, wallWidth, wallHeight, wallDepth, wallMaterial);   
+        // Load the floor texture from on-chain inscription URL
+        const floorTexture = textureLoader.load('https://dogeord.io/content/your_marble_inscription_url.png'); // Replace with actual URL
+        const floorMaterial = new THREE.MeshStandardMaterial({ map: floorTexture, roughness: 1.0 });
+        const floorGeometry = new THREE.PlaneGeometry(100, 100);
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = 0;
+        scene.add(floor);
 
-    refreshImages();
+        // Load ceiling texture
+        const ceilingTexture = textureLoader.load('https://wonky-ord.dogeord.io/content/86887e3ff26e6764f2f501ad570e4b10f594460273d056b4103d74fdc2fa68dfi0');
+        const ceilingMaterial = new THREE.MeshStandardMaterial({ map: ceilingTexture });
+        const ceiling = new THREE.Mesh(floorGeometry, ceilingMaterial);
+        ceiling.rotation.x = Math.PI / 2;
+        ceiling.position.y = 15;
+        scene.add(ceiling);
+
+        // Load wall texture
+        const wallTexture = textureLoader.load('https://dogeord.io/content/49467e246fc467ba168940fb354be353afef7173dd052644ec29445647d35604i0'); // URL for onchain wall texture
+        const wallMaterial = new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 1.0 });
+        const wallHeight = 15;
+        const wallWidth = 100;
+        const wallDepth = 1;
+
+        // Create walls using wall texture
+        createWall(0, wallHeight / 2, -50, wallWidth, wallHeight, wallDepth, wallMaterial);  // Back wall
+        createWall(-50, wallHeight / 2, 0, wallDepth, wallHeight, wallWidth, wallMaterial);  // Left wall
+        createWall(50, wallHeight / 2, 0, wallDepth, wallHeight, wallWidth, wallMaterial);   // Right wall
+        createWall(0, wallHeight / 2, 50, wallWidth, wallHeight, wallDepth, wallMaterial);   // Front wall
+
+        refreshImages();
 
         raycaster = new THREE.Raycaster();
         mouse = new THREE.Vector2();
 
+        // Mouse and Keyboard Listeners
         document.addEventListener('mousedown', () => { isDragging = true; });
         document.addEventListener('mouseup', () => { isDragging = false; });
         document.addEventListener('mousemove', onMouseMove, false);
@@ -224,20 +227,16 @@ Using ASWD or arrow keys</p>
         document.addEventListener('keyup', onKeyUp, false);
         document.addEventListener('click', onDocumentMouseDown, false);
 
-        // On-screen controls
+        // On-screen controls for touch devices
         document.getElementById('up').addEventListener('touchstart', () => moveForward = true);
         document.getElementById('up').addEventListener('touchend', () => moveForward = false);
-
         document.getElementById('down').addEventListener('touchstart', () => moveBackward = true);
         document.getElementById('down').addEventListener('touchend', () => moveBackward = false);
-
         document.getElementById('left').addEventListener('touchstart', () => moveRight = true); 
         document.getElementById('left').addEventListener('touchend', () => moveRight = false);
-
         document.getElementById('right').addEventListener('touchstart', () => moveLeft = true); 
         document.getElementById('right').addEventListener('touchend', () => moveLeft = false);
 
-        
         const joystick = document.getElementById('joystick');
         const joystickInner = document.getElementById('joystickInner');
         let startX, deltaX;
@@ -251,17 +250,15 @@ Using ASWD or arrow keys</p>
             e.preventDefault();
             const touch = e.touches[0];
             deltaX = touch.clientX - startX;
-
             const rotationSpeed = 0.0005; 
             camera.rotation.y -= deltaX * rotationSpeed;
-
             joystickInner.style.transform = `translateX(${deltaX}px)`;
         });
 
         joystick.addEventListener('touchend', () => {
             joystickInner.style.transform = `translateX(0px)`;
         });
-        
+
         document.getElementById('okButton').addEventListener('click', () => {
             document.getElementById('modal').style.display = 'none';
         });
@@ -271,72 +268,12 @@ Using ASWD or arrow keys</p>
         });
         
         document.getElementById('refreshButton').addEventListener('click', (event) => {
-        event.stopPropagation();  // Prevent event from propagating and triggering other handlers
-        refreshImages();
+            event.stopPropagation();  // Prevent event from propagating and triggering other handlers
+            refreshImages();
         });
     }
 
-    function createWall(x, y, z, width, height, depth, material) {
-    const wallGeometry = new THREE.BoxGeometry(width, height, depth);
-    const wall = new THREE.Mesh(wallGeometry, material);
-    wall.position.set(x, y, z);
-    scene.add(wall);
-    return wall;
-}
-
-    function createImageOnWall(x, y, z, rotY, index) {
-        if (index >= inscriptionIds.length) return;
-
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load(`/content/${inscriptionIds[index]}`);
-        const imageMaterial = new THREE.MeshBasicMaterial({ map: texture });
-        const imageGeometry = new THREE.PlaneGeometry(6, 6);
-        const imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
-
-        imageMesh.position.set(x, y, z);
-        imageMesh.rotation.y = rotY;
-        imageMesh.userData = { url: `https://doggy.market/inscription/${inscriptionIds[index]}` };
-        scene.add(imageMesh);
-        imageMeshes.push(imageMesh);
-    }
-
-    function refreshImages() {
-        // Remove existing image meshes
-        for (let mesh of imageMeshes) {
-            scene.remove(mesh);
-        }
-        imageMeshes = [];
-
-        const imageSize = 6;  
-        const imageDistance = 10;  
-        let index = currentImageIndex;
-
-        const firstRowHeight = 4; 
-        const secondRowHeight = 11
-;  
-        
-        for (let i = -40; i <= 40; i += imageDistance) {
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, firstRowHeight, -48, 0, index++); 
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(-48, firstRowHeight, i, Math.PI / 2, index++); 
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, firstRowHeight, 48, Math.PI, index++); 
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(48, firstRowHeight, i, -Math.PI / 2, index++); 
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, secondRowHeight, -48, 0, index++); 
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(-48, secondRowHeight, i, Math.PI / 2, index++); 
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, secondRowHeight, 48, Math.PI, index++); 
-            if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(48, secondRowHeight, i, -Math.PI / 2, index++); 
-        }
-
-        currentImageIndex = index % inscriptionIds.length;
-    }
-
+    // Mouse Move Function
     function onMouseMove(event) {
         if (!isDragging) return;
 
@@ -345,6 +282,7 @@ Using ASWD or arrow keys</p>
         camera.rotation.y -= movementX * 0.002;
     }
 
+    // Keyboard Down Function
     function onKeyDown(event) {
         switch (event.code) {
             case 'ArrowDown':
@@ -366,6 +304,7 @@ Using ASWD or arrow keys</p>
         }
     }
 
+    // Keyboard Up Function
     function onKeyUp(event) {
         switch (event.code) {
             case 'ArrowDown':
@@ -387,6 +326,7 @@ Using ASWD or arrow keys</p>
         }
     }
 
+    // Mouse Click Function
     function onDocumentMouseDown(event) {
         event.preventDefault();
 
@@ -405,6 +345,67 @@ Using ASWD or arrow keys</p>
         }
     }
 
+    function createWall(x, y, z, width, height, depth, material) {
+        const wallGeometry = new THREE.BoxGeometry(width, height, depth);
+        const wall = new THREE.Mesh(wallGeometry, material);
+        wall.position.set(x, y, z);
+        scene.add(wall);
+        return wall;
+    }
+
+    function refreshImages() {
+        // Remove existing image meshes
+        for (let mesh of imageMeshes) {
+            scene.remove(mesh);
+        }
+        imageMeshes = [];
+
+        const imageSize = 6;
+        const imageDistance = 10;
+        let index = currentImageIndex;
+
+        const firstRowHeight = 4;
+        const secondRowHeight = 11;
+
+        for (let i = -40; i <= 40; i += imageDistance) {
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, firstRowHeight, -48, 0, index++);
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(-48, firstRowHeight, i, Math.PI / 2, index++);
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, firstRowHeight, 48, Math.PI, index++);
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(48, firstRowHeight, i, -Math.PI / 2, index++);
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, secondRowHeight, -48, 0, index++);
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(-48, secondRowHeight, i, Math.PI / 2, index++);
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(i, secondRowHeight, 48, Math.PI, index++);
+            if (index >= inscriptionIds.length) index = 0;
+            createImageOnWall(48, secondRowHeight, i, -Math.PI / 2, index++);
+        }
+
+        currentImageIndex = index % inscriptionIds.length;
+    }
+
+    function createImageOnWall(x, y, z, rotY, index) {
+        if (index >= inscriptionIds.length) return;
+
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load(`/content/${inscriptionIds[index]}`);
+        const imageMaterial = new THREE.MeshBasicMaterial({ map: texture });
+        const imageGeometry = new THREE.PlaneGeometry(6, 6);
+        const imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
+
+        imageMesh.position.set(x, y, z);
+        imageMesh.rotation.y = rotY;
+        imageMesh.userData = { url: `https://doggy.market/inscription/${inscriptionIds[index]}` };
+        scene.add(imageMesh);
+        imageMeshes.push(imageMesh);
+    }
+    
+    // Animation loop
     function animate() {
         requestAnimationFrame(animate);
 
@@ -413,16 +414,13 @@ Using ASWD or arrow keys</p>
         if (moveForward) {
             moveDirection.add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(speed));
         }
-
         if (moveBackward) {
             moveDirection.sub(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(speed));
         }
-
         if (moveLeft) {
             moveDirection.x -= camera.getWorldDirection(new THREE.Vector3()).z * speed;
             moveDirection.z += camera.getWorldDirection(new THREE.Vector3()).x * speed;
         }
-
         if (moveRight) {
             moveDirection.x += camera.getWorldDirection(new THREE.Vector3()).z * speed;
             moveDirection.z -= camera.getWorldDirection(new THREE.Vector3()).x * speed;
@@ -432,9 +430,7 @@ Using ASWD or arrow keys</p>
 
         const floorLevel = 0;
         const ceilingHeight = 15;
-
         camera.position.y = Math.max(floorLevel + 1.7, Math.min(ceilingHeight - 0.5, camera.position.y));
-
         camera.position.x = Math.max(-49, Math.min(49, camera.position.x));
         camera.position.z = Math.max(-49, Math.min(49, camera.position.z));
 
