@@ -284,7 +284,7 @@
         const textureLoader = new THREE.TextureLoader();
 
         // Load the floor texture from on-chain inscription URL
-        const floorTexture = textureLoader.load('https://dogeord.io/content/bbf7387a7280dd3f31c0d6098f2ecff74b03f5d32e6e2acd9fed3b0d56787aa0i0'); // Replace with actual URL
+        const floorTexture = textureLoader.load('https://wonky-ord.dogeord.io/content/bbf7387a7280dd3f31c0d6098f2ecff74b03f5d32e6e2acd9fed3b0d56787aa0i0'); // Replace with actual URL
         const floorMaterial = new THREE.MeshStandardMaterial({ map: floorTexture, roughness: 1.0 });
         const floorGeometry = new THREE.PlaneGeometry(100, 100);
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -301,7 +301,7 @@
         scene.add(ceiling);
 
         // Load wall texture
-        const wallTexture = textureLoader.load('https://dogeord.io/content/49467e246fc467ba168940fb354be353afef7173dd052644ec29445647d35604i0'); // URL for onchain wall texture
+        const wallTexture = textureLoader.load('https://wonky-ord.dogeord.io/content/49467e246fc467ba168940fb354be353afef7173dd052644ec29445647d35604i0'); // URL for onchain wall texture
         const wallMaterial = new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 1.0 });
         const wallHeight = 15;
         const wallWidth = 100;
