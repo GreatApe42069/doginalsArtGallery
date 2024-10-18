@@ -284,7 +284,7 @@
         const textureLoader = new THREE.TextureLoader();
 
         // Load the floor texture from on-chain inscription URL
-        const floorTexture = textureLoader.load('https://dogeord.io/content/your_marble_inscription_url.png'); // Replace with actual URL
+        const floorTexture = textureLoader.load('https://dogeord.io/content/bbf7387a7280dd3f31c0d6098f2ecff74b03f5d32e6e2acd9fed3b0d56787aa0i0'); // Replace with actual URL
         const floorMaterial = new THREE.MeshStandardMaterial({ map: floorTexture, roughness: 1.0 });
         const floorGeometry = new THREE.PlaneGeometry(100, 100);
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
