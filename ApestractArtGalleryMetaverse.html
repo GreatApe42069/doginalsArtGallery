@@ -330,7 +330,7 @@
         // Load wall texture and scale texture to avoid stretching
         const wallTexture = textureLoader.load('/content/49467e246fc467ba168940fb354be353afef7173dd052644ec29445647d35604i0');
         wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
-        wallTexture.repeat.set(12, 0.5);  // Adjust scaling to avoid stretched appearance
+        wallTexture.repeat.set(12, 0.8);  // Adjust scaling to avoid stretched appearance
 
         const wallMaterial = new THREE.MeshStandardMaterial({
             map: wallTexture,
