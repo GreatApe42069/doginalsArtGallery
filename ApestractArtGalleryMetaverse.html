@@ -7,14 +7,14 @@
     <style>
         @font-face {
             font-family: 'CustomFont';
-            src: url('https://wonky-ord.dogeord.io/content/b3af17d23c17f604ec00251e4333cd40fa6230ed7386d685d63d3acce9516f33i0') format('truetype');
+            src: url('/content/b3af17d23c17f604ec00251e4333cd40fa6230ed7386d685d63d3acce9516f33i0') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
         body { 
             margin: 0; 
             overflow: hidden; 
-            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto; /* Custom cursor */
+            cursor: url('/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto; /* Custom cursor */
         }
 
         canvas { display: block; }
@@ -35,7 +35,7 @@
         }
         #modalContent {
             text-align: center;
-            background-image: url('https://wonky-ord.dogeord.io/content/ba71544f3a6431f4a83375bdcecf4f714a25dafb82920ba79bab638f84968230i0');
+            background-image: url('/content/ba71544f3a6431f4a83375bdcecf4f714a25dafb82920ba79bab638f84968230i0');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -50,7 +50,7 @@
             color: rgb(255, 255, 0);
             border: none;
             border-radius: 5px;
-            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
+            cursor: url('/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
             font-family: CustomFont, sans-serif;
         }
         #topButtons {
@@ -69,7 +69,7 @@
             color: #2700ff;
             border: none;
             border-radius: 5px;
-            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
+            cursor: url('/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
             font-family: CustomFont, sans-serif;
         }
         #controls {
@@ -92,7 +92,7 @@
             text-align: center;
             line-height: 60px;
             user-select: none;
-            cursor: url('https://wonky-ord.dogeord.io/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
+            cursor: url('/content/0798bf75ab07fcdf153c13fc07ef381916a010ebe5d5729564aef3dd0aac4a54i0'), auto;
         }
         #joystick {
             position: absolute;
@@ -260,7 +260,6 @@
         "c0a060de67dce99fe1fada13cdb69d132b51bd1df83706df0891a902c8c50347i0"
     ];
 
-
     let camera, scene, renderer;
     let raycaster, mouse, isDragging = false;
     let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
@@ -283,28 +282,63 @@
 
         const textureLoader = new THREE.TextureLoader();
 
-        // Load the floor texture from on-chain inscription URL
-        const floorTexture = textureLoader.load('https://wonky-ord.dogeord.io/content/bbf7387a7280dd3f31c0d6098f2ecff74b03f5d32e6e2acd9fed3b0d56787aa0i0'); // Replace with actual URL
-        const floorMaterial = new THREE.MeshStandardMaterial({ map: floorTexture, roughness: 1.0 });
-        const floorGeometry = new THREE.PlaneGeometry(100, 100);
+        // Add lighting to ensure proper rendering of materials
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);  // Softer overall light
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        directionalLight.position.set(10, 10, 10);
+        scene.add(directionalLight);
+
+        // Add additional directional light focused on the floor
+	const floorLight = new THREE.DirectionalLight(0xffffff, 1);
+	floorLight.position.set(0, 10, 0);  // Position it above the floor
+	floorLight.target.position.set(0, 0, 0);  // Target the floor center
+	scene.add(floorLight);
+	scene.add(floorLight.target);
+
+        // Load the floor texture
+        const floorTexture = textureLoader.load('/content/bbf7387a7280dd3f31c0d6098f2ecff74b03f5d32e6e2acd9fed3b0d56787aa0i0');
+        const floorMaterial = new THREE.MeshStandardMaterial({
+            map: floorTexture,
+            roughness: 0.2, // Lower roughness for shinier surface
+            metalness: 0.8 // Increase metalness for a more reflective floor
+        });
+        const floorGeometry = new THREE.PlaneGeometry(500, 500);
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
         floor.rotation.x = -Math.PI / 2;
         floor.position.y = 0;
         scene.add(floor);
 
         // Load ceiling texture
-        const ceilingTexture = textureLoader.load('https://wonky-ord.dogeord.io/content/86887e3ff26e6764f2f501ad570e4b10f594460273d056b4103d74fdc2fa68dfi0');
-        const ceilingMaterial = new THREE.MeshStandardMaterial({ map: ceilingTexture });
-        const ceiling = new THREE.Mesh(floorGeometry, ceilingMaterial);
+        const ceilingTexture = textureLoader.load('/content/86887e3ff26e6764f2f501ad570e4b10f594460273d056b4103d74fdc2fa68dfi0');
+
+        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+        floorTexture.repeat.set(10, 10);  // Adjust these values to fit the texture properly across the floor
+
+        const ceilingMaterial = new THREE.MeshStandardMaterial({
+            map: ceilingTexture,
+            roughness: 0.8,
+            metalness: 0.2
+        });
+        const ceilingGeometry = new THREE.PlaneGeometry(500, 500);
+        const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
         ceiling.rotation.x = Math.PI / 2;
         ceiling.position.y = 15;
         scene.add(ceiling);
 
-        // Load wall texture
-        const wallTexture = textureLoader.load('https://wonky-ord.dogeord.io/content/49467e246fc467ba168940fb354be353afef7173dd052644ec29445647d35604i0'); // URL for onchain wall texture
-        const wallMaterial = new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 1.0 });
+        // Load wall texture and scale texture to avoid stretching
+        const wallTexture = textureLoader.load('/content/49467e246fc467ba168940fb354be353afef7173dd052644ec29445647d35604i0');
+        wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
+        wallTexture.repeat.set(12, 0.5);  // Adjust scaling to avoid stretched appearance
+
+        const wallMaterial = new THREE.MeshStandardMaterial({
+            map: wallTexture,
+            roughness: 1.1,
+            metalness: 0.1
+        });
         const wallHeight = 15;
-        const wallWidth = 100;
+        const wallWidth = 500;
         const wallDepth = 1;
 
         // Create walls using wall texture
@@ -377,7 +411,6 @@
         if (!isDragging) return;
 
         const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-
         camera.rotation.y -= movementX * 0.002;
     }
 
@@ -466,27 +499,41 @@
         const firstRowHeight = 4;
         const secondRowHeight = 11;
 
+        // Back wall
         for (let i = -40; i <= 40; i += imageDistance) {
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, firstRowHeight, -48, 0, index++);
+            createImageOnWall(i, firstRowHeight, -49 + 0.1, 0, index++);  // First row
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(-48, firstRowHeight, i, Math.PI / 2, index++);
+            createImageOnWall(i, secondRowHeight, -49 + 0.1, 0, index++);  // Second row
+        }
+
+        // Left wall
+        for (let i = -40; i <= 40; i += imageDistance) {
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, firstRowHeight, 48, Math.PI, index++);
+            createImageOnWall(-49 + 0.1, firstRowHeight, i, Math.PI / 2, index++);  // First row
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(48, firstRowHeight, i, -Math.PI / 2, index++);
+            createImageOnWall(-49 + 0.1, secondRowHeight, i, Math.PI / 2, index++);  // Second row
+        }
+
+        // Front wall
+        for (let i = -40; i <= 40; i += imageDistance) {
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, secondRowHeight, -48, 0, index++);
+            createImageOnWall(i, firstRowHeight, 49 - 0.1, Math.PI, index++);  // First row
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(-48, secondRowHeight, i, Math.PI / 2, index++);
+            createImageOnWall(i, secondRowHeight, 49 - 0.1, Math.PI, index++);  // Second row
+        }
+
+        // Right wall
+        for (let i = -40; i <= 40; i += imageDistance) {
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(i, secondRowHeight, 48, Math.PI, index++);
+            createImageOnWall(49 - 0.1, firstRowHeight, i, -Math.PI / 2, index++);  // First row
             if (index >= inscriptionIds.length) index = 0;
-            createImageOnWall(48, secondRowHeight, i, -Math.PI / 2, index++);
+            createImageOnWall(49 - 0.1, secondRowHeight, i, -Math.PI / 2, index++);  // Second row
         }
 
         currentImageIndex = index % inscriptionIds.length;
     }
+
 
     function createImageOnWall(x, y, z, rotY, index) {
         if (index >= inscriptionIds.length) return;
@@ -529,6 +576,7 @@
 
         const floorLevel = 0;
         const ceilingHeight = 15;
+        const wallLimit = 245;  // Adjust this value based on the size of your walls
         camera.position.y = Math.max(floorLevel + 1.7, Math.min(ceilingHeight - 0.5, camera.position.y));
         camera.position.x = Math.max(-49, Math.min(49, camera.position.x));
         camera.position.z = Math.max(-49, Math.min(49, camera.position.z));
