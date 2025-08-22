@@ -1,4 +1,4 @@
-# 🐶 Đoginals Art Gallery
+# 🐶 Đoginals 3d Interactive On-Chain Art Gallery
 
 Welcome to the **Doginals Art Gallery**, an interactive, fully on-chain 3D art gallery built using Doginals (inscriptions on the Dogecoin blockchain). This project showcases a metaverse-style gallery where users can explore inscribed artwork, textures, fonts, and scripts in a 3D environment. The gallery is designed to be a template, allowing you to customize it with your own Doginal inscriptions, text, lighting, and scaling to create your own unique on-chain gallery.
 
@@ -297,3 +297,10 @@ This software is Open-source, Decentralized, an FREE to use, Donations are accep
 
  **"Đogecoin_address":** **D9pqzxiiUke5eodEzMmxZAxpFcbvwuM4Hg**
 
+---
+
+***You can donate to*** **Heimdall** ***here:***
+
+"𝕏 handle": ***"Heimdall_Bull"*** "at": [***"@Heimdall_Bull"***](https://x.com/Heimdall_Bull)
+
+ **"Đogecoin_address":** **DEpFirPqu8DZUoCT7zEzGZs74JPTCF3ZMJ**
